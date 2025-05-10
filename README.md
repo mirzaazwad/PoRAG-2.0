@@ -26,12 +26,17 @@ To see the previous version: [PoRAG 1.0](https://github.com/Bangla-RAG/PoRAG)
 ## Installation
 
 1. **Install Python:** Download and install Python from [python.org](https://www.python.org/).
-2. **Clone the Repository:**
+2. **Install Conda:** Download and install Conda for Windows from [anaconda.com](https://www.anaconda.com/docs/getting-started/anaconda/install#windows-installation).
+
+- For the mac os installation look into [Windows Installation](https://www.anaconda.com/docs/getting-started/anaconda/install#macos-linux-installation)
+- For the linux installation look into [Linux Installation](https://www.anaconda.com/docs/getting-started/anaconda/install#linux-installer)
+
+3. **Clone the Repository:**
    ```bash
    git clone https://github.com/Bangla-RAG/PoRAG.git
    cd PoRAG
    ```
-3. **Install Required Libraries:**
+4. **Install Required Libraries:**
    ```bash
    conda env create -f environment.yml
    conda activate banglarag
