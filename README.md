@@ -1,5 +1,4 @@
-# PoRAG (পরাগ) 2.0, Bangla Retrieval-Augmented Generation (RAG) Pipeline
-![Banner](/banner.png)
+# PoRAG (পরাগ) 2.0, Bangla Retrieval-Augmented Generation (RAG) Pipeline, with slight debugs
 
 This is an improvement of the original PoRag 1.0. It is now fully configurable and supports both local and huggingface models, built with ChromaDB and Langchain.
 
@@ -23,28 +22,23 @@ To see the previous version: [PoRAG 1.0](https://github.com/Bangla-RAG/PoRAG)
 - **Customizable LLM Integration:** Supports Hugging Face or local LLMs compatible with Transformers.
 - **Flexible Embedding:** Supports embedding models compatible with Sentence Transformers (embedding dimension: 768).
 - **Hyperparameter Control:** Adjust `max_new_tokens`, `top_p`, `top_k`, `temperature`, `chunk_size`, `chunk_overlap`, and `k`.
-- **Toggle Quantization mode:** Pass `--quantization` argument to toggle between different types of model including LoRA and 4bit quantization.
 
 ## Installation
 
 1. **Install Python:** Download and install Python from [python.org](https://www.python.org/).
 2. **Clone the Repository:**
-    ```bash
-    git clone https://github.com/Bangla-RAG/PoRAG.git
-    cd PoRAG
-    ```
+   ```bash
+   git clone https://github.com/Bangla-RAG/PoRAG.git
+   cd PoRAG
+   ```
 3. **Install Required Libraries:**
-    ```bash
-    # Option 1: Using pip
-    pip install -r requirements.txt
-    
-    # Option 2: Using conda (recommended)
-    conda env create -f environment.yml
-    conda activate porag
-    ```
+   ```bash
+   conda env create -f environment.yml
+   conda activate banglarag
+   ```
 
 <details>
-<summary>Click to view example `requirements.txt`</summary>
+<summary>Click to view example `environment.yml`</summary>
 
 ```txt
 langchain==0.2.3
@@ -58,15 +52,16 @@ bitsandbytes==0.41.3
 sentence-transformers==3.0.1
 rich==13.7.1
 ```
+
 </details>
 
 ## Running the Pipeline
 
 1. **Prepare Your Bangla Text Corpus:** Create a text file (e.g., `test.txt`) with the Bengali text you want to use.
 2. **Run the RAG Pipeline:**
-    ```bash
-    python main.py --text_path test.txt
-    ```
+   ```bash
+   python main.py --text_path test.txt
+   ```
 3. **Interact with the System:** Type your question and press Enter to get a response based on the retrieved information.
 
 ## Example
@@ -77,6 +72,7 @@ rich==13.7.1
 ```
 
 # Parameters description
+
 You can pass these arguments and adjust their values during each runs.
 
 <table>
@@ -93,7 +89,7 @@ You can pass these arguments and adjust their values during each runs.
             <td><code>chat_model</code></td>
             <td>str</td>
             <td>The ID of the chat model. It can be either a Hugging Face model ID or a local path to the model.</td>
-            <td>Use the model ID from the HuggingFace model card or provide the local path to the model. The default value is set to <code>"hassanaliemon/bn_rag_llama3-8b"</code>.</td>
+            <td>Use the model ID from the HuggingFace model card or provide the local path to the model. The default value is set to <code>"asif00/bangla-llama-1B"</code>.</td>
         </tr>
         <tr>
             <td><code>embed_model</code></td>
@@ -156,12 +152,6 @@ You can pass these arguments and adjust their values during each runs.
             <td>Use <code>--show_context</code> flag to enable this feature.</td>
         </tr>
         <tr>
-            <td><code>quantization</code></td>
-            <td>bool</td>
-            <td>Whether to enable quantization(4bit) or not.</td>
-            <td>Use <code>--quantization</code> flag to enable this feature.</td>
-        </tr>
-        <tr>
             <td><code>hf_token</code></td>
             <td>str</td>
             <td>Your Hugging Face API token.</td>
@@ -170,10 +160,9 @@ You can pass these arguments and adjust their values during each runs.
     </tbody>
 </table>
 
-
 ## Key Milestones
 
-- **Default LLM:** Trained a LLaMA-3 8B model `hassanaliemon/bn_rag_llama3-8b` for context-based QA.
+- **Default LLM:** Trained a LLaMA-3 8B model `asif00/bangla-llama-1B` for context-based QA.
 - **Embedding Model:** Tested `sagorsarker/bangla-bert-base`, `csebuetnlp/banglabert`, and found `l3cube-pune/bengali-sentence-similarity-sbert` to be most effective.
 - **Retrieval Pipeline:** Implemented Langchain Retrieval pipeline and tested with our fine-tuned LLM and embedding model.
 - **Ingestion System:** Settled on text files after testing several PDF parsing solutions.
@@ -181,7 +170,7 @@ You can pass these arguments and adjust their values during each runs.
 - **Generation Configuration Control:** Attempted to use generation config in the LLM pipeline.
 - **Model Testing:** Tested with the following models(quantized and lora versions):
   1. [`asif00/bangla-llama`](https://huggingface.co/asif00/bangla-llama)
-  2. [`hassanaliemon/bn_rag_llama3-8b`](https://huggingface.co/hassanaliemon/bn_rag_llama3-8b)
+  2. [`asif00/bangla-llama-1B`](https://huggingface.co/asif00/bangla-llama-1B)
   3. [`asif00/mistral-bangla`](https://huggingface.co/asif00/mistral-bangla)
   4. [`KillerShoaib/llama-3-8b-bangla-4bit`](https://huggingface.co/KillerShoaib/llama-3-8b-bangla-4bit)
 
@@ -189,8 +178,7 @@ You can pass these arguments and adjust their values during each runs.
 
 - **PDF Parsing:** Currently, only text (.txt) files are supported due to the lack of reliable Bengali PDF parsing tools.
 - **Quality of answers:** The qualities of answer depends heavily on the quality of your chosen LLM, embedding model and your Bengali text corpus.
-- **Scarcity of Pre-trained models:** As of now, we do not have a high fidelity Bengali LLM Pre-trained models available for QA tasks, which makes it difficult to achieve impressive RAG performance. Overall performance may very depending on the model we use.  
-
+- **Scarcity of Pre-trained models:** As of now, we do not have a high fidelity Bengali LLM Pre-trained models available for QA tasks, which makes it difficult to achieve impressive RAG performance. Overall performance may very depending on the model we use.
 
 ## Future Steps
 
@@ -203,16 +191,14 @@ You can pass these arguments and adjust their values during each runs.
 We welcome contributions! If you have suggestions, bug reports, or enhancements, please open an issue or submit a pull request.
 
 ### Top Contributors
+
 [![LinkedIn: Abdullah Al Asif](https://img.shields.io/badge/LinkedIn-Abdullah%20Al%20Asif-blue)](https://www.linkedin.com/in/abdullahalasif-bd/) [Abdullah Al Asif](https://github.com/asiff00)
 
 [![LinkedIn: Hasan Ali Emon](https://img.shields.io/badge/LinkedIn-Hasan%20Ali%20Emon-blue)](https://www.linkedin.com/in/hassan-ali-emon/) [Hasan Ali Emon](https://github.com/hassanaliemon)
 
-
-
 ## Disclaimer
 
 This is a work-in-progress and may require further refinement. The results depend on the quality of your Bengali text corpus and the chosen models.
-
 
 ### References
 
@@ -220,7 +206,7 @@ This is a work-in-progress and may require further refinement. The results depen
 2. [Langchain](https://www.langchain.com/)
 3. [ChromaDB](https://www.trychroma.com/)
 4. [Sentence Transformers](https://www.sbert.net/)
-5. [hassanaliemon/bn_rag_llama3-8b](https://huggingface.co/hassanaliemon/bn_rag_llama3-8b)
+5. [asif00/bangla-llama-1B](https://huggingface.co/asif00/bangla-llama-1B)
 6. [l3cube-pune/bengali-sentence-similarity-sbert](https://huggingface.co/l3cube-pune/bengali-sentence-similarity-sbert)
 7. [sagorsarker/bangla-bert-base](https://huggingface.co/sagorsarker/bangla-bert-base)
 8. [csebuetnlp/banglabert](https://huggingface.co/csebuetnlp/banglabert)
