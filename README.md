@@ -1,10 +1,9 @@
-# PoRAG (পরাগ), Bangla Retrieval-Augmented Generation (RAG) Pipeline
+# PoRAG (পরাগ) 2.0, Bangla Retrieval-Augmented Generation (RAG) Pipeline
 ![Banner](/banner.png)
 
-[![LinkedIn: Abdullah Al Asif](https://img.shields.io/badge/LinkedIn-Abdullah%20Al%20Asif-blue)](https://www.linkedin.com/in/abdullahalasif-bd/)
-[![LinkedIn: Hasan Ali Emon](https://img.shields.io/badge/LinkedIn-Hasan%20Ali%20Emon-blue)](https://www.linkedin.com/in/hassan-ali-emon/)
+This is an improvement of the original PoRag 1.0. It is now fully configurable and supports both local and huggingface models, built with ChromaDB and Langchain.
 
-Welcome to the **Bangla Retrieval-Augmented Generation (RAG) Pipeline**! This repository provides a pipeline for interacting with Bengali text data using natural language.
+To see the previous version: [PoRAG 1.0](https://github.com/Bangla-RAG/PoRAG)
 
 ## Use Cases
 
@@ -36,7 +35,12 @@ Welcome to the **Bangla Retrieval-Augmented Generation (RAG) Pipeline**! This re
     ```
 3. **Install Required Libraries:**
     ```bash
+    # Option 1: Using pip
     pip install -r requirements.txt
+    
+    # Option 2: Using conda (recommended)
+    conda env create -f environment.yml
+    conda activate porag
     ```
 
 <details>
