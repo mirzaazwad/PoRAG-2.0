@@ -1,6 +1,3 @@
-import logging
-import warnings
-
 import os
 import torch
 from transformers import (
@@ -8,8 +5,8 @@ from transformers import (
     AutoModelForCausalLM,
     pipeline,
     GenerationConfig,
+    BitsAndBytesConfig,
 )
-import traceback
 from langchain_core.prompts import PromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -19,13 +16,17 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import Document
+import traceback
 from rich import print as rprint
 from rich.panel import Panel
 from tqdm import tqdm
 import warnings
 import re
 
+warnings.filterwarnings("ignore")
+
 CACHE_DIR = "./models"
+
 
 class BanglaRAGChain:
     """
@@ -46,6 +47,7 @@ class BanglaRAGChain:
         self.chunk_size = 500
         self.chunk_overlap = 150
         self.text_path = ""
+        self.quantization = None
         self.temperature = 0.9
         self.top_p = 0.6
         self.top_k = 50
@@ -65,6 +67,7 @@ class BanglaRAGChain:
         chat_model_id,
         embed_model_id,
         text_path,
+        quantization,
         k=4,
         top_k=2,
         top_p=0.6,
@@ -81,6 +84,7 @@ class BanglaRAGChain:
             chat_model_id (str): The Hugging Face model ID for the chat model.
             embed_model_id (str): The Hugging Face model ID for the embedding model.
             text_path (str): Path to the text file to be indexed.
+            quantization (bool): Whether to quantization the model or not.
             k (int): The number of documents to retrieve.
             top_k (int): The top_k parameter for the generation configuration.
             top_p (float): The top_p parameter for the generation configuration.
@@ -99,6 +103,7 @@ class BanglaRAGChain:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.text_path = text_path
+        self.quantization = quantization
         self.max_new_tokens = max_new_tokens
         self.hf_token = hf_token
 
@@ -126,12 +131,34 @@ class BanglaRAGChain:
         """Loads the chat model and tokenizer."""
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(self.chat_model_id)
-            self.chat_model = AutoModelForCausalLM.from_pretrained(
-                    self.chat_model_id,
-                    device_map="auto",
-                    torch_dtype=torch.float16,
-                    cache_dir=CACHE_DIR
+            bnb_config = None
+            if self.quantization:
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_compute_dtype=torch.float16,
                 )
+                rprint(Panel("[bold green]Applying 4bit quantization...", expand=False))
+                self.chat_model = AutoModelForCausalLM.from_pretrained(
+                    self.chat_model_id,
+                    torch_dtype=torch.float16,
+                    low_cpu_mem_usage=True,
+                    quantization_config=bnb_config,
+                    device_map="auto",
+                    cache_dir=CACHE_DIR,
+                )
+                rprint(Panel("[bold green]Applied 4bit quantization successfully", expand=False))
+
+            else:
+                self.chat_model = AutoModelForCausalLM.from_pretrained(
+                    self.chat_model_id,
+                    torch_dtype=torch.float16,
+                    low_cpu_mem_usage=True,
+                    device_map="auto",
+                    cache_dir=CACHE_DIR,
+                )
+            rprint(Panel("[bold green]Chat Model loaded successfully!", expand=False))
         except Exception as e:
             rprint(Panel(f"[red]Error loading chat model: {e}", expand=False))
 
@@ -152,6 +179,11 @@ class BanglaRAGChain:
                 )
             )
             print(f"Number of chunks: {len(self._documents)}")
+            if False:
+                for i, chunk in enumerate(self._documents):
+                    if i > 5:
+                        break
+                    print(f"Chunk {i}: {chunk}")
             rprint(Panel("[bold green]Document created successfully!", expand=False))
         except Exception as e:
             rprint(Panel(f"[red]Chunking failed: {e}", expand=False))
@@ -241,7 +273,7 @@ class BanglaRAGChain:
                 top_k=self.top_k,
                 eos_token_id=self.tokenizer.eos_token_id,
                 pad_token_id=self.tokenizer.eos_token_id,
-                bos_token_id=self.tokenizer.bos_token_id, 
+                bos_tokn_id=self.tokenizer.bos_token_id,
             )
             pipe = pipeline(
                 "text-generation",
@@ -249,7 +281,7 @@ class BanglaRAGChain:
                 tokenizer=self.tokenizer,
                 torch_dtype=torch.float16,
                 device_map="auto",
-                generation_config=config,
+                generation_config=config,  # Disabled for now, causing issues.
             )
             self._llm = HuggingFacePipeline(pipeline=pipe)
             rprint(Panel("[bold green]LLM initialized successfully!", expand=False))

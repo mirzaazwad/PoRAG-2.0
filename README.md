@@ -22,6 +22,7 @@ To see the previous version: [PoRAG 1.0](https://github.com/Bangla-RAG/PoRAG)
 - **Customizable LLM Integration:** Supports Hugging Face or local LLMs compatible with Transformers.
 - **Flexible Embedding:** Supports embedding models compatible with Sentence Transformers (embedding dimension: 768).
 - **Hyperparameter Control:** Adjust `max_new_tokens`, `top_p`, `top_k`, `temperature`, `chunk_size`, `chunk_overlap`, and `k`.
+- **Quantization:** Supports quantization for memory and speed optimization.
 
 ## Installation
 
@@ -143,6 +144,12 @@ You can pass these arguments and adjust their values during each runs.
             <td>int</td>
             <td>The chunk overlap for text splitting.</td>
             <td>The default value is set to <code>150</code>.</td>
+        </tr>
+        <tr>
+            <td><code>quantization</code></td>
+            <td>bool</td>
+            <td>Whether to use quantization or not.</td>
+            <td>The default value is set to <code>False</code>. Use <code>--quantization True</code> flag to enable this feature.</td>
         </tr>
         <tr>
             <td><code>text_path</code></td>

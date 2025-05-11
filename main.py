@@ -18,6 +18,7 @@ DEFAULT_CHUNK_SIZE = 500
 DEFAULT_CHUNK_OVERLAP = 150
 DEFAULT_MAX_NEW_TOKENS = 256
 DEFAULT_HF_TOKEN = os.getenv("HF_TOKEN")
+DEFAULT_QUANTIZATION = False
 
 
 def main():
@@ -97,6 +98,12 @@ def main():
         default=DEFAULT_HF_TOKEN,
         help="Your Hugging Face API token",
     )
+    parser.add_argument(
+        "--quantization",
+        type=bool,
+        default=DEFAULT_QUANTIZATION,
+        help="Whether to use quantization or not",
+    )
 
     # Parse command-line arguments
     args = parser.parse_args()
@@ -121,6 +128,7 @@ def main():
             chunk_overlap=args.chunk_overlap,
             hf_token=args.hf_token,
             max_new_tokens=args.max_new_tokens,
+            quantization=args.quantization,
         )
         logging.info(
             f"RAG model loaded successfully: chat_model={args.chat_model}, embed_model={args.embed_model}"
